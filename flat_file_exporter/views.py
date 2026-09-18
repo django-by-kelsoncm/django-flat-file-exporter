@@ -219,7 +219,7 @@ class BaseExportView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
             self.exported_file.lifecycle.failed(error)
             raise
         task_id = getattr(result, "id", None)
-        if task_id:
+        if isinstance(task_id, str) and task_id:
             self.exported_file.task_id = task_id
             self.exported_file.save(update_fields=["task_id"])
 

@@ -197,6 +197,14 @@ def test_export_view_post_creates_export_runs_task_and_redirects(client_logged, 
     assert args == (export.pk,) and kwargs == {"filetype": "csv", "min_age": 30}
 
 
+def test_export_view_ignores_a_task_result_without_a_string_id(client_logged, monkeypatch):
+    monkeypatch.setattr(PeopleExportView.task_ref, "function", lambda *args, **kwargs: None)
+    monkeypatch.setattr(PeopleExportView.task_ref, "delay", lambda *args, **kwargs: object())
+    response = client_logged.post(reverse("people_export"), {"filetype": "csv"})
+    assert response.status_code == 302
+    assert ExportedFile.objects.get().task_id is None
+
+
 def test_export_view_post_invalid_form_rerenders(client_logged):
     response = client_logged.post(reverse("people_export"), {"filetype": "csv", "min_age": "not-a-number"})
     assert response.status_code == 200
