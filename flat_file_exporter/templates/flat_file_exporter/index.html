@@ -1,0 +1,410 @@
+{% extends base_template %}
+{% load i18n static humanize flat_file_exporter_tags %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'flat_file_exporter/index.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <h3>{% trans 'Exports' %}</h3>
+
+    <!-- Main Row -->
+    <div class="row">
+        <!-- Main Col -->
+        <div class="col-md-12 results">
+
+            <!-- Filter and Actions -->
+            <div class="card card-primary card-outline">
+                <!-- .card-body -->
+                <div class="card-body p-0">
+                    <!-- Toolbar de Filtros -->
+                    <div class="p-3 border-bottom">
+                        <div class="filters-toolbar mb-3">
+                            <!-- New export button -->
+                            <button type="button" class="btn btn-primary btn-novo" data-toggle="modal" data-target="#newExportModal">
+                                <i class="fas fa-plus"></i> New
+                            </button>
+
+                            <!-- Grupo de Busca e Filtros -->
+                            <div class="filters-group">
+                                <div class="input-group">
+                                    <input type="text" id="search-input" class="form-control" placeholder="Search...">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-default" type="button">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-default dropdown-toggle" id="btn-filter-situacoes" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fas fa-filter"></i> Statuses
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-down" id="dropdown-situacoes">
+                                                <div class="px-3 py-2">
+                                                    <input type="text" class="form-control form-control-sm autocomplete-search" placeholder="Search...">
+                                                </div>
+                                                <div class="dropdown-divider"></div>
+                                                <div class="filter-items">
+                                                    {% for status in statuses %}
+                                                    <a class="dropdown-item filter-item-situacao" data-value="{{ status.value }}" data-text="{{ status.short_display }}" role="button" tabindex="0">
+                                                        <i class="far fa-circle mr-2"></i>{{ status.short_display }}
+                                                    </a>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-default dropdown-toggle" id="btn-filter-tipos" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fas fa-filter"></i> Kinds
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-down dropdown-menu-right" id="dropdown-tipos">
+                                                <div class="px-3 py-2">
+                                                    <input type="text" class="form-control form-control-sm autocomplete-search" placeholder="Search...">
+                                                </div>
+                                                <div class="dropdown-divider"></div>
+                                                <div class="filter-items">
+                                                    {% for form in forms %}
+                                                    <a class="dropdown-item filter-item-tipo" data-value="{{ form.meta_data.link }}" data-text="{{ form.meta_data.title }}" role="button" tabindex="0">
+                                                        <i class="far fa-circle mr-2"></i>{{ form.meta_data.title }}
+                                                    </a>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Export button -->
+                            <div class="btn-group btn-exportar">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-download"></i> Export
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#" data-format="xlsx"><i class="fas fa-file-excel text-success"></i> XLSX</a>
+                                    <a class="dropdown-item" href="#" data-format="csv"><i class="fas fa-file-csv text-info"></i> CSV</a>
+                                    <a class="dropdown-item" href="#" data-format="json"><i class="fas fa-file-code text-warning"></i> JSON</a>
+                                    <a class="dropdown-item" href="#" data-format="html"><i class="fas fa-file-code text-danger"></i> HTML</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Filtros Ativos -->
+                        <div id="active-filters">
+                            <small class="text-muted">Active filters:</small>
+                            <div id="filter-badges" class="d-inline-block"><span class="text-muted" style="font-size: 0.875rem;">No active filters</span></div>
+                            <a href="#" id="clear-filters" class="small ml-2 d-none">Clear all</a>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /Filter and Actions -->
+
+            <!-- Paginator -->
+            {% if exported_files %}
+            <div class="paginator p-3 border-bottom">
+                <div class="row align-items-center">
+                    <div class="col-sm-12 col-md-3 mb-2 mb-md-0">
+                        <button type="button" class="btn btn-default btn-sm checkbox-toggle" title="Select all">
+                            <i class="far fa-square"></i>
+                        </button>
+                    </div>
+                    <div class="col-sm-12 col-md-9 d-flex justify-content-md-end align-items-center flex-wrap">
+                        {% if page_obj %}
+                        <div class="dataTables_info mr-md-3 mb-2 mb-md-0" role="status" aria-live="polite">
+                            Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} records
+                        </div>
+                        <div class="dataTables_paginate paging_simple_numbers mb-2 mb-md-0">
+                            <ul class="pagination pagination-sm m-0">
+                                <li class="paginate_button page-item previous {% if not page_obj.has_previous %}disabled{% endif %}">
+                                    {% if page_obj.has_previous %}
+                                    <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Previous</a>
+                                    {% else %}
+                                    <span class="page-link">Previous</span>
+                                    {% endif %}
+                                </li>
+
+                                {% for page_number in page_obj.paginator.page_range %}
+                                {% if page_number >= page_obj.number|add:'-2' and page_number <= page_obj.number|add:'2' %}
+                                <li class="paginate_button page-item {% if page_number == page_obj.number %}active{% endif %}">
+                                    {% if page_number == page_obj.number %}
+                                    <span class="page-link">{{ page_number }}</span>
+                                    {% else %}
+                                    <a href="?page={{ page_number }}" class="page-link">{{ page_number }}</a>
+                                    {% endif %}
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+
+                                <li class="paginate_button page-item next {% if not page_obj.has_next %}disabled{% endif %}">
+                                    {% if page_obj.has_next %}
+                                    <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a>
+                                    {% else %}
+                                    <span class="page-link">Next</span>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            <!-- /Paginator -->
+
+            <!-- Result -->
+            <div class="change_list_results">
+                <div class="row js-exports-grid" data-visible-fields="{{ card_fields_visible|default:3 }}">
+                    {% for exported_file in exported_files %}
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-stretch">
+                        <div class="card card-outline w-100 mb-3 js-card" data-export-id="{{ exported_file.id }}" data-poll-url="{% url 'flat_file_exporter:task_status' exported_file.id %}" data-delete-url="{% url 'flat_file_exporter:delete' exported_file.id %}" data-export-status="{{ exported_file.status }}" data-task-id="{{ exported_file.task_id|default:'' }}">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="ml-2 flex-grow-1">
+                                        <h5 class="card-title mb-0">
+                                            <i class="{{ exported_file.status_icon }}"></i>
+                                            {{ exported_file.name|truncatewords:5 }}
+                                        </h5>
+                                    </div>
+                                    <div class="card-tools">
+                                        <div class="icheck-primary">
+                                            <input type="checkbox" value="{{ exported_file.id }}" id="check{{ exported_file.id }}">
+                                            <label for="check{{ exported_file.id }}"></label>
+                                        </div>
+                                        <button type="button" class="btn btn-tool btn-sm">
+                                            <i class="fas fa-star text-warning"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <div class="mb-2 js-card-field">
+                                    <strong><i class="fas fa-info-circle mr-1"></i> Status</strong>
+                                    <p class="text-muted mb-0">
+                                        <span class="badge badge-{% if exported_file.status == 5 %}success{% elif exported_file.status == 9 %}danger{% elif exported_file.status == 1 %}warning{% else %}secondary{% endif %}" data-export-status-badge>
+                                            {{ exported_file.get_status_display }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="mb-2 js-card-field">
+                                    <strong><i class="far fa-calendar-alt mr-1"></i> Requested at</strong>
+                                    <p class="text-muted mb-0">{{ exported_file.requested_at|naturaltime }}</p>
+                                </div>
+                                <div class="mb-2 js-card-field">
+                                    <strong><i class="far fa-file mr-1"></i> Kind</strong>
+                                    <p class="text-muted mb-0">{{ exported_file.kind }}</p>
+                                </div>
+                                {% if exported_file.generation_started_at %}
+                                <div class="mb-2 js-card-field">
+                                    <strong><i class="far fa-calendar-check mr-1"></i> Generation started</strong>
+                                    <p class="text-muted mb-0">{{ exported_file.generation_started_at|naturaltime }}</p>
+                                </div>
+                                {% endif %}
+                                {% if exported_file.generation_finished_at %}
+                                <div class="mb-2 js-card-field">
+                                    <strong><i class="far fa-calendar-check mr-1"></i> Generation finished</strong>
+                                    <p class="text-muted mb-0" data-export-finished-at>{{ exported_file.generation_finished_at|naturaltime }}</p>
+                                </div>
+                                {% endif %}
+                                {% if exported_file.failed_at %}
+                                <div class="mb-2 js-card-field">
+                                    <strong><i class="far fa-calendar-times mr-1"></i> Failed at</strong>
+                                    <p class="text-muted mb-0" data-export-failed-at>{{ exported_file.failed_at|naturaltime }}</p>
+                                </div>
+                                {% endif %}
+                                {% if exported_file.trashed_at %}
+                                <div class="mb-2 js-card-field">
+                                    <strong><i class="far fa-calendar-times mr-1"></i> Trashed at</strong>
+                                    <p class="text-muted mb-0" data-export-trashed-at>{{ exported_file.trashed_at|naturaltime }}</p>
+                                </div>
+                                {% endif %}
+                                {% if exported_file.processing_time %}
+                                <div class="mb-2 js-card-field">
+                                    <strong><i class="far fa-clock mr-1"></i> Processing time</strong>
+                                    <p class="text-muted mb-0" data-export-processing-time>{{ exported_file.processing_time|format_duration }}</p>
+                                </div>
+                                {% endif %}
+                                {% if exported_file.upload_time %}
+                                <div class="mb-2 js-card-field">
+                                    <strong><i class="far fa-clock mr-1"></i> Upload time</strong>
+                                    <p class="text-muted mb-0" data-export-upload-time>{{ exported_file.upload_time|format_duration }}</p>
+                                </div>
+                                {% endif %}
+                                <div class="mb-2 js-card-field">
+                                    <strong><i class="fas fa-hdd mr-1"></i> Size</strong>
+                                    <p class="text-muted mb-0" data-export-size>{{ exported_file.size|filesizeformat }}</p>
+                                </div>
+                                {% if exported_file.stakeholders.exists %}
+                                <div class="mb-2 js-card-field">
+                                    <strong><i class="fas fa-users mr-1"></i> Stakeholders</strong>
+                                    <p class="text-muted mb-0">{{ exported_file.stakeholders.count }}</p>
+                                </div>
+                                {% endif %}
+                                {% if user.is_superuser %}
+                                    <div class="mb-2 js-card-field">
+                                        <strong><i class="fas fa-tasks mr-1"></i> Task ID</strong>
+                                        <p class="text-muted mb-0">{{ exported_file.task_id|default:"N/A" }}</p>
+                                    </div>
+                                    <div class="mb-2 js-card-field">
+                                        <strong><i class="fas fa-exclamation-triangle mr-1"></i> Failure cause</strong>
+                                        <p class="text-muted mb-0" data-export-failure-cause>{{ exported_file.failure_cause|default:"N/A" }}</p>
+                                    </div>
+                                    <div class="mb-2 js-card-field">
+                                        <strong><i class="fas fa-exclamation-triangle mr-1"></i> Failure stack</strong>
+                                        <p class="text-muted mb-0" data-export-failure-stack>{{ exported_file.failure_stack|default:"N/A" }}</p>
+                                    </div>
+                                {% endif %}
+                                <button type="button" class="btn btn-link btn-sm p-0 mt-auto text-left js-toggle-campos d-none" aria-expanded="false">Show more</button>
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between">
+                                    <a {% if exported_file.download_url %}href="{{ exported_file.download_url }}"{% else %}href="#"{% endif %} class="btn btn-sm {% if exported_file.status == 5 %}btn-primary{% else %}btn-secondary disabled{% endif %}" title="Download" data-export-download {% if exported_file.status != 5 %}tabindex="-1" aria-disabled="true"{% endif %}>
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-warning" title="Share">
+                                        <i class="fas fa-share"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-danger" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 p-3">
+                        <div class="callout callout-info">
+                            <h5><i class="fas fa-info"></i> No exports found</h5>
+                            <p>There are no exports to show right now.</p>
+                            <button 
+                                type="button" 
+                                class="btn btn-primary mt-2 btn-sm"
+                                data-toggle="modal"
+                                data-target="#newExportModal"
+                            >
+                                <i class="fas fa-plus"></i> Request a new export
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- /Result -->
+
+        </div>
+        <!-- /Main Col -->
+    </div>
+    <!-- /Main Row  -->
+
+    <!-- New export modal -->
+    <div class="modal fade" id="newExportModal" tabindex="-1" role="dialog" aria-labelledby="newExportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newExportModalLabel">New export</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% if forms %}
+                        <div class="row">
+                            {% for form in forms %}
+                                <div class="col-12 col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body d-flex flex-column">
+                                            <h6 class="card-title mb-3">{{ form.meta_data.title }}</h6>
+
+                                            <div class="mb-2">
+                                                <a class="btn btn-primary btn-sm {% if forloop.first %}js-primeiro-formulario{% endif %}" href="{{ form.meta_data.link }}">Request</a>
+                                            </div>
+
+                                            {% if form.meta_data.description %}
+                                                <div class="mb-2">
+                                                    <a
+                                                        class="small"
+                                                        data-toggle="collapse"
+                                                        href="#descricao-form-{{ forloop.counter }}"
+                                                        role="button"
+                                                        aria-expanded="false"
+                                                        aria-controls="descricao-form-{{ forloop.counter }}"
+                                                    >
+                                                        Show description
+                                                    </a>
+                                                    <div class="collapse mt-2" id="descricao-form-{{ forloop.counter }}">
+                                                        <div class="small text-muted">{{ form.meta_data.description|render_markdown }}</div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+
+                                            {% if form.meta_data.filters %}
+                                                <div class="mb-2">
+                                                    <a
+                                                        class="small"
+                                                        data-toggle="collapse"
+                                                        href="#filtros-form-{{ forloop.counter }}"
+                                                        role="button"
+                                                        aria-expanded="false"
+                                                        aria-controls="filtros-form-{{ forloop.counter }}"
+                                                    >
+                                                        Show filters
+                                                    </a>
+                                                    <div class="collapse mt-2" id="filtros-form-{{ forloop.counter }}">
+                                                        <ul class="list-unstyled small mb-0">
+                                                            {% for filter in form.meta_data.filters %}
+                                                                <li class="mb-2">
+                                                                    <strong>{{ filter.title }}</strong>
+                                                                    <span class="text-muted">({% if filter.required %}required{% else %}optional{% endif %})</span>
+                                                                    {% if filter.description %}
+                                                                        <div class="text-muted">{{ filter.description|render_markdown }}</div>
+                                                                    {% endif %}
+                                                                </li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                            {% if form.meta_data.columns %}
+                                                <div class="mb-2">
+                                                    <a
+                                                        class="small"
+                                                        data-toggle="collapse"
+                                                        href="#colunas-form-{{ forloop.counter }}"
+                                                        role="button"
+                                                        aria-expanded="false"
+                                                        aria-controls="colunas-form-{{ forloop.counter }}"
+                                                    >
+                                                        Show columns
+                                                    </a>
+                                                    <div class="collapse mt-2" id="colunas-form-{{ forloop.counter }}">
+                                                        <ul class="list-unstyled small mb-0">
+                                                            {% for column in form.meta_data.columns %}
+                                                                <li class="mb-2">
+                                                                    <strong>{{ column.name }}</strong>
+                                                                    {% if column.description %}<span class="text-muted">{{ column.description }}</span>{% endif %}
+                                                                </li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="mb-0 text-muted">No export forms available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /New export modal -->
+{% endblock content %}
+
+{% block bottom_scripts %}
+    {{ block.super }}
+    <script src="{% static 'flat_file_exporter/index.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,213 @@
+{% extends base_template %}
+{% load i18n static flat_file_exporter_tags %}
+
+{% block content_title %}{{ form.title }}{% endblock %}
+
+{% block content %}
+    <form method="post" style="width: 100%;">
+            <input type="hidden" name="filetype" id="filetype-input" value="">
+        {% csrf_token %}
+        {% if form.description %}
+        <div class="callout callout-info">
+            <h5><i class="fas fa-info"></i> Information:</h5>
+            <div>{{ form.description_html|safe }}</div>
+            {% if form.meta_data.columns %}
+                <div class="mb-2">
+                    <a
+                        class="small"
+                        data-toggle="collapse"
+                        href="#colunas-form-{{ forloop.counter }}"
+                        role="button"
+                        aria-expanded="false"
+                        aria-controls="colunas-form-{{ forloop.counter }}"
+                    >
+                        Show columns
+                    </a>
+                    <div class="collapse mt-2" id="colunas-form-{{ forloop.counter }}">
+                        <ul class="list-unstyled small mb-0">
+                            {% for column in form.meta_data.columns %}
+                                <li class="mb-2">
+                                    <strong>{{ column.name }}</strong>
+                                    {% if column.description %}<span class="text-muted">{{ column.description }}</span>{% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if form.errors %}
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h5><i class="icon fas fa-ban"></i>Attention!</h5>
+                <ul>
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="card card-primary card-outline">
+            <div class="card-body">
+                {% if form.fieldsets %}
+                    {% for group in form.fieldset_groups %}
+                        {% if group.type == 'tabs' %}
+                            <ul class="nav nav-tabs mb-3" id="fieldset-tabs-{{ forloop.counter }}" role="tablist">
+                                {% for fieldset in group.items %}
+                                    <li class="nav-item" role="presentation">
+                                        <a
+                                            class="nav-link {% if forloop.first %}active{% endif %}"
+                                            id="fieldset-tab-{{ forloop.parentloop.counter }}-{{ forloop.counter }}"
+                                            data-toggle="pill"
+                                            href="#fieldset-pane-{{ forloop.parentloop.counter }}-{{ forloop.counter }}"
+                                            role="tab"
+                                            aria-controls="fieldset-pane-{{ forloop.parentloop.counter }}-{{ forloop.counter }}"
+                                            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                                        >
+                                            {{ fieldset.0 }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                            <div class="tab-content" id="fieldset-tab-content-{{ forloop.counter }}">
+                                {% for fieldset in group.items %}
+                                    <div
+                                        class="tab-pane fade {% if forloop.first %}show active{% endif %} {{ fieldset.1.classes|join:' ' }}"
+                                        id="fieldset-pane-{{ forloop.parentloop.counter }}-{{ forloop.counter }}"
+                                        role="tabpanel"
+                                        aria-labelledby="fieldset-tab-{{ forloop.parentloop.counter }}-{{ forloop.counter }}"
+                                    >
+                                        {% if fieldset.1.description %}
+                                            <p class="text-muted small mb-3">{{ fieldset.1.description }}</p>
+                                        {% endif %}
+
+                                        {% for field_item in fieldset.1.fields %}
+                                            {% if field_item in form.fields %}
+                                                {% for field in form.visible_fields %}
+                                                    {% if field.name == field_item %}
+                                                        {% include 'flat_file_exporter/_form_field.html' %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                <div class="form-row">
+                                                    {% for field_name in field_item %}
+                                                        {% for field in form.visible_fields %}
+                                                            {% if field.name == field_name %}
+                                                                {% include 'flat_file_exporter/_form_field.html' with extra_class="col-md-6" %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {% for fieldset in group.items %}
+                                <fieldset class="mb-4 {{ fieldset.1.classes|join:' ' }}">
+                                    {% if 'collapse' in fieldset.1.classes %}
+                                        <legend class="h5 mb-3">
+                                            <a
+                                                data-toggle="collapse"
+                                                href="#fieldset-collapse-{{ forloop.parentloop.counter }}-{{ forloop.counter }}"
+                                                role="button"
+                                                aria-expanded="false"
+                                                aria-controls="fieldset-collapse-{{ forloop.parentloop.counter }}-{{ forloop.counter }}"
+                                            >
+                                                {{ fieldset.0 }}
+                                            </a>
+                                        </legend>
+
+                                        {% if fieldset.1.description %}
+                                            <p class="fieldset-description text-muted small mb-3">{{ fieldset.1.description }}</p>
+                                        {% endif %}
+                                        <div class="collapse" id="fieldset-collapse-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
+                                    {% else %}
+                                        <legend class="h5 mb-3">{{ fieldset.0 }}</legend>
+
+                                        {% if fieldset.1.description %}
+                                            <p class="fieldset-description text-muted small mb-3">{{ fieldset.1.description }}</p>
+                                        {% endif %}
+                                        <div>
+                                    {% endif %}
+
+                                    {% for field_item in fieldset.1.fields %}
+                                        {% if field_item in form.fields %}
+                                            {% for field in form.visible_fields %}
+                                                {% if field.name == field_item %}
+                                                    {% include 'flat_file_exporter/_form_field.html' %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <div class="form-row">
+                                                {% with col_class=field_item|bootstrap_col_class %}
+                                                {% for field_name in field_item %}
+                                                    {% for field in form.visible_fields %}
+                                                        {% if field.name == field_name %}
+                                                            {% include 'flat_file_exporter/_form_field.html' with extra_class=col_class %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endfor %}
+                                                {% endwith %}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                    </div>
+                                </fieldset>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {{ form.as_p }}
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <div class="btn-group btn-exportar">
+                    {% if form.filetypes_mapped %}
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            {% for ft in form.filetypes_mapped %}
+                                <button class="dropdown-item exportar-btn" type="button" data-format="{{ ft.filetype }}" title="{{ ft.hint }}">
+                                    <i class="{{ ft.icon }}"></i> {{ ft.label }}
+                                </button>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <a href="{% url 'flat_file_exporter:index' %}" class="btn btn-secondary">Cancel</a>
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var exportButtons = document.querySelectorAll('.exportar-btn');
+                        exportButtons.forEach(function(btn) {
+                            btn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                var format = btn.getAttribute('data-format');
+                                var form = btn.closest('form');
+                                if (form) {
+                                    var filetypeInputs = form.querySelectorAll('input[name="filetype"]');
+                                    filetypeInputs.forEach(function(input) {
+                                        input.value = format;
+                                    });
+                                    form.submit();
+                                }
+                            });
+                        });
+                    });
+                    </script>
+            </div>
+        </div>
+
+    </form>
+{% endblock %}

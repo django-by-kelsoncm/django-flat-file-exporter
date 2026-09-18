@@ -1,0 +1,26 @@
+.cursor-pointer {
+    cursor: pointer;
+}
+.dropdown-menu .autocomplete-search {
+    border: none;
+    border-bottom: 1px solid #e3e6f0;
+}
+.dropdown-menu .autocomplete-search:focus {
+    box-shadow: none;
+    border-color: #007bff;
+}
+.dropdown-menu .filter-items {
+    max-height: 250px;
+    overflow-y: auto;
+}
+.dropdown-menu .filter-item-situacao.selected::before,
+.dropdown-menu .filter-item-tipo.selected::before {
+    content: "\f05d";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 0.5rem;
+}
+.dropdown-menu-down {
+    top: 100% !important;
+    bottom: auto !important;
+}

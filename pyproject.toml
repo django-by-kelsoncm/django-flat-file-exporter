@@ -1,0 +1,78 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-flat-file-exporter"
+version = "0.1.0"
+description = "Reusable Django app to request, generate asynchronously, store and download flat-file exports (xlsx, csv, tsv, json, html, parquet)"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Kelson da Costa Medeiros", email = "kelsoncm@gmail.com" }]
+keywords = ["django", "export", "xlsx", "csv", "parquet", "celery", "storage"]
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: Django",
+    "Framework :: Django :: 5.2",
+    "Framework :: Django :: 6.0",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "django>=5.2",
+    "markdown>=3.5",
+    "flat-file-renderers>=0.1.0",
+]
+
+[project.optional-dependencies]
+all = ["flat-file-renderers[all]>=0.1.0", "celery>=5.3"]
+celery = ["celery>=5.3"]
+dev = [
+    "flat-file-renderers[all]>=0.1.0",
+    "celery>=5.3",
+    "pytest>=9.0.3",
+    "pytest-django>=4.9",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.15.11",
+]
+
+[project.urls]
+Homepage = "https://github.com/django-by-kelsoncm/django-flat-file-exporter"
+"Bug Tracker" = "https://github.com/django-by-kelsoncm/django-flat-file-exporter/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["flat_file_exporter*"]
+
+[tool.setuptools.package-data]
+flat_file_exporter = ["templates/**/*.html", "static/**/*", "locale/**/*"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tests.settings"
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["flat_file_exporter"]
+omit = ["tests/*", "*/migrations/*"]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.ruff]
+line-length = 120
+force-exclude = true
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S"]
