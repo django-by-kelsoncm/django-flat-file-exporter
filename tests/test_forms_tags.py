@@ -25,7 +25,7 @@ def test_metadata_from_docstring_and_fields():
     assert metadata.link == "/people/"
     assert [crumb["title"] for crumb in metadata.breadcrumbs] == ["Exports", "People list"]
     filter_titles = [f.title for f in metadata.filters]
-    assert "Minimum age" in filter_titles
+    assert filter_titles == ["Minimum age"]  # the hidden filetype field is not a filter
     minimum = next(f for f in metadata.filters if f.title == "Minimum age")
     assert minimum.required is False and minimum.description == "Only people at least this old"
     assert [c.name for c in metadata.columns] == ["name", "age"]

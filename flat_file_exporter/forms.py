@@ -204,6 +204,7 @@ class BaseExportForm(forms.Form):
                 required=field.required,
             )
             for name, field in self.fields.items()
+            if not field.widget.is_hidden
         ]
 
     def get_columns(self) -> list[ExportColumn]:
