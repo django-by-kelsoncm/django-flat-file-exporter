@@ -1,7 +1,6 @@
 import logging
 from typing import Any
 
-from django.apps import apps
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -154,8 +153,11 @@ class BaseExportView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
         self.form: BaseExportForm | None = None
 
     def get_template_names(self) -> list[str]:
-        app_config = apps.get_containing_app_config(self.get_form_class().__module__)
-        specific = f"{app_config.label}/{to_snake_case(self.get_form_class().__name__.removesuffix('Form'))}.html"
+        """Form-specific template first, derived from the form's module: ``pkg.app.forms.FooBarForm`` ->
+        ``pkg/app/foo_bar.html``; then the generic ``flat_file_exporter/form.html``."""
+        form_class = self.get_form_class()
+        directory = "/".join(form_class.__module__.split(".")[:-1])
+        specific = f"{directory}/{to_snake_case(form_class.__name__.removesuffix('Form'))}.html"
         return [specific, "flat_file_exporter/form.html"]
 
     def get_form_class(self) -> type[BaseExportForm]:

@@ -236,6 +236,6 @@ def test_export_view_kind_and_defaults_can_be_overridden(rf, user):
     assert BaseExportView().get_content_type() == "application/octet-stream"
 
 
-def test_export_view_template_names_prefer_app_specific_template(rf):
+def test_export_view_template_names_follow_the_form_module_path():
     names = PeopleExportView().get_template_names()
-    assert names == ["sampleapp/people_export.html", "flat_file_exporter/form.html"]
+    assert names == ["tests/sampleapp/people_export.html", "flat_file_exporter/form.html"]
