@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# compiled translation catalogs are part of the package
+!flat_file_exporter/locale/**/*.mo
