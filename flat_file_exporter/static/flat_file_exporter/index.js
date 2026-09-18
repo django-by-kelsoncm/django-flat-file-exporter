@@ -1,5 +1,10 @@
 $(function () {
     var POLLING_INTERVAL_MS = 5000;
+    // Translated strings come from the template (window.flatFileExporterI18n); English is the fallback.
+    var i18n = window.flatFileExporterI18n || {};
+    function t(key, fallback) {
+        return i18n[key] || fallback;
+    }
 
     function refreshCardStatus(card, payload) {
         // Enable/disable the download button according to the status
@@ -8,12 +13,12 @@ $(function () {
             if (payload.status.value === 5 && payload.download_url) { // 5 = GENERATED
                 downloadBtn.removeClass('btn-secondary disabled').addClass('btn-primary');
                 downloadBtn.removeAttr('tabindex aria-disabled');
-                downloadBtn.attr('title', 'Download');
+                downloadBtn.attr('title', t('download', 'Download'));
                 downloadBtn.attr('href', payload.download_url);
             } else {
                 downloadBtn.removeClass('btn-primary').addClass('btn-secondary disabled');
                 downloadBtn.attr('tabindex', '-1').attr('aria-disabled', 'true');
-                downloadBtn.attr('title', 'Download unavailable until processing finishes');
+                downloadBtn.attr('title', t('downloadUnavailable', 'Download unavailable until processing finishes'));
                 downloadBtn.attr('href', '#');
             }
         }
@@ -217,7 +222,7 @@ $(function () {
             fields.removeClass('d-none js-campo-extra');
 
             if (fields.length <= visibleFieldsCount) {
-                toggleButton.addClass('d-none').attr('aria-expanded', 'false').text('Show more');
+                toggleButton.addClass('d-none').attr('aria-expanded', 'false').text(t('showMore', 'Show more'));
                 return;
             }
 
@@ -230,7 +235,7 @@ $(function () {
             toggleButton
                 .removeClass('d-none')
                 .attr('aria-expanded', 'false')
-                .text('Show more');
+                .text(t('showMore', 'Show more'));
         });
     }
 
@@ -242,10 +247,10 @@ $(function () {
 
         if (isExpanded) {
             extraFields.addClass('d-none');
-            button.attr('aria-expanded', 'false').text('Show more');
+            button.attr('aria-expanded', 'false').text(t('showMore', 'Show more'));
         } else {
             extraFields.removeClass('d-none');
-            button.attr('aria-expanded', 'true').text('Show less');
+            button.attr('aria-expanded', 'true').text(t('showLess', 'Show less'));
         }
     });
 
@@ -342,7 +347,7 @@ $(function () {
         var searchText = $('#search-input').val();
         if (searchText && searchText.trim() !== '') {
             hasFilters = true;
-            badges.push('<span class="badge badge-warning">Busca: ' + searchText + ' <i class="fas fa-times" data-filter="search"></i></span>');
+            badges.push('<span class="badge badge-warning">' + t('search', 'Search') + ': ' + searchText + ' <i class="fas fa-times" data-filter="search"></i></span>');
         }
 
         if (selectedStatuses.length > 0) {
@@ -352,7 +357,7 @@ $(function () {
                 var text = element.data('text');
 
                 if (text) {
-                    badges.push('<span class="badge badge-info">Status: ' + text + ' <i class="fas fa-times" data-filter="situacao" data-value="' + value + '"></i></span>');
+                    badges.push('<span class="badge badge-info">' + t('status', 'Status') + ': ' + text + ' <i class="fas fa-times" data-filter="situacao" data-value="' + value + '"></i></span>');
                 }
             });
         }
@@ -364,7 +369,7 @@ $(function () {
                 var text = element.data('text');
 
                 if (text) {
-                    badges.push('<span class="badge badge-success"Kind: ' + text + ' <i class="fas fa-times" data-filter="tipo" data-value="' + value + '"></i></span>');
+                    badges.push('<span class="badge badge-success">' + t('kind', 'Kind') + ': ' + text + ' <i class="fas fa-times" data-filter="tipo" data-value="' + value + '"></i></span>');
                 }
             });
         }
@@ -373,7 +378,7 @@ $(function () {
             $('#filter-badges').html(badges.join(''));
             $('#clear-filters').removeClass('d-none');
         } else {
-            $('#filter-badges').html('<span class="text-muted" style="font-size: 0.875rem;">No active filters</span>');
+            $('#filter-badges').html('<span class="text-muted" style="font-size: 0.875rem;">' + t('noActiveFilters', 'No active filters') + '</span>');
             $('#clear-filters').addClass('d-none');
         }
     }
@@ -417,7 +422,7 @@ $(function () {
     $('.dropdown-menu a[data-format]').on('click', function(e) {
         e.preventDefault();
         var format = $(this).data('format');
-        alert('Exportar para ' + format.toUpperCase() + ' - Funcionalidade a ser implementada');
+        alert(t('exportNotImplemented', 'Export to %s is not implemented yet').replace('%s', format.toUpperCase()));
     });
 
     // Disable/enable a card's actions and visual state
@@ -444,7 +449,7 @@ $(function () {
     }
 
     // Delete button handler
-    $(document).on('click', '.btn-danger[title="Delete"]', function(e) {
+    $(document).on('click', '[data-export-delete]', function(e) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -457,7 +462,7 @@ $(function () {
         }
 
         // Delete confirmation
-        if (!confirm('Move the export "' + exportName + '" to the trash?')) {
+        if (!confirm(t('confirmTrash', 'Move the export %s to the trash?').replace('%s', '"' + exportName + '"'))) {
             return;
         }
 
@@ -482,7 +487,7 @@ $(function () {
                     });
 
                     // Show the success message
-                    showNotification('success', 'Export moved to the trash');
+                    showNotification('success', t('trashed', 'Export moved to the trash'));
 
                     // Remove the card after a short delay
                     setTimeout(function() {
@@ -492,13 +497,13 @@ $(function () {
                     }, 1500);
                 } else {
                     setCardDisabled(card, false);
-                    showNotification('error', data.message || 'Error moving the export to the trash');
+                    showNotification('error', data.message || t('trashError', 'Error moving the export to the trash'));
                 }
             },
             error: function(xhr, status, error) {
                 setCardDisabled(card, false);
                 console.error('Error deleting the export:', error);
-                showNotification('error', 'Error moving the export to the trash: ' + error);
+                showNotification('error', t('trashError', 'Error moving the export to the trash') + ': ' + error);
             }
         });
     });

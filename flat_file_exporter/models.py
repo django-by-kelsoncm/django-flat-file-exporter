@@ -7,6 +7,7 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils.timezone import now
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from flat_file_exporter.conf import get_storage
@@ -94,8 +95,12 @@ class ExportedFile(models.Model):
             exported_file = self.exported_file
             logger.error("Failed to generate export %s: %s", exported_file, error)
             exported_file.status = ExportedFile.Status.FAILED
-            exported_file.failure_cause = str(error) if error is not None else "Failure while generating the file"
-            exported_file.failure_stack = traceback.format_exc() if error is not None else "No stack trace available"
+            exported_file.failure_cause = (
+                str(error) if error is not None else gettext("Failure while generating the file")
+            )
+            exported_file.failure_stack = (
+                traceback.format_exc() if error is not None else gettext("No stack trace available")
+            )
             exported_file.failed_at = now()
             exported_file.save()
 

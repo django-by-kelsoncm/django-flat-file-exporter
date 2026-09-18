@@ -1,0 +1,310 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: django-flat-file-exporter\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Exports"
+msgstr "Arquivos"
+
+msgid "Exports inbox"
+msgstr "Caixa de arquivos"
+
+msgid "Requested"
+msgstr "Solicitado"
+
+msgid "Generating"
+msgstr "Gerando"
+
+msgid "Generated"
+msgstr "Gerado"
+
+msgid "Failed"
+msgstr "Falha"
+
+msgid "Trashed"
+msgstr "Lixeira"
+
+msgid "Waiting to start"
+msgstr "Aguardando iniciar a geração"
+
+msgid "Generating the file"
+msgstr "Gerando o arquivo"
+
+msgid "File generated"
+msgstr "Arquivo gerado"
+
+msgid "File generation failed"
+msgstr "Falha na geração do arquivo"
+
+msgid "File in the trash"
+msgstr "Arquivo na lixeira"
+
+msgid "Requester"
+msgstr "Requisitante"
+
+msgid "Recipient"
+msgstr "Destinatário"
+
+msgid "Manager"
+msgstr "Gestor"
+
+msgid "status"
+msgstr "status"
+
+msgid "requested at"
+msgstr "data da solicitação"
+
+msgid "generation started at"
+msgstr "data do início da geração"
+
+msgid "generation finished at"
+msgstr "data do término da geração"
+
+msgid "failed at"
+msgstr "data da falha"
+
+msgid "trashed at"
+msgstr "data da lixeira"
+
+msgid "kind of export"
+msgstr "tipo de arquivo"
+
+msgid "file name"
+msgstr "nome do arquivo"
+
+msgid "notes"
+msgstr "observação"
+
+msgid "validation code"
+msgstr "código de validação"
+
+msgid "storage key"
+msgstr "chave no armazenamento"
+
+msgid "content type"
+msgstr "tipo de conteúdo"
+
+msgid "size (bytes)"
+msgstr "tamanho (em bytes)"
+
+msgid "processing time (seconds)"
+msgstr "tempo consumido para processar (em segundos)"
+
+msgid "upload time (seconds)"
+msgstr "tempo consumido para upload (em segundos)"
+
+msgid "task id"
+msgstr "id da task"
+
+msgid "failure cause"
+msgstr "causa da falha"
+
+msgid "failure stack"
+msgstr "stack da falha"
+
+msgid "file format"
+msgstr "formato do arquivo"
+
+msgid "exported file"
+msgstr "arquivo"
+
+msgid "exported files"
+msgstr "arquivos"
+
+msgid "stakeholder"
+msgstr "interessado"
+
+msgid "stakeholders"
+msgstr "interessados"
+
+msgid "user"
+msgstr "usuário"
+
+msgid "role"
+msgstr "relação"
+
+msgid "assigned at"
+msgstr "data da atribuição"
+
+msgid "File type"
+msgstr "Tipo de arquivo"
+
+msgid "Failure while generating the file"
+msgstr "Falha durante a geração do arquivo"
+
+msgid "No stack trace available"
+msgstr "Sem stack trace disponível"
+
+msgid "Requested by %(username)s"
+msgstr "Solicitado por %(username)s"
+
+msgid "Method not allowed"
+msgstr "Método não permitido"
+
+msgid "File moved to the trash"
+msgstr "Arquivo movido para a lixeira"
+
+msgid ""
+"Your request was received and is being processed. You can follow its status "
+"in the exports list."
+msgstr ""
+"Sua solicitação foi recebida e está em processamento. Você poderá acompanhar"
+" o status na lista de arquivos."
+
+msgid "New"
+msgstr "Novo"
+
+msgid "Search..."
+msgstr "Procurar..."
+
+msgid "Statuses"
+msgstr "Situações"
+
+msgid "Kinds"
+msgstr "Tipos"
+
+msgid "Export"
+msgstr "Exportar"
+
+msgid "Active filters:"
+msgstr "Filtros ativos:"
+
+msgid "No active filters"
+msgstr "Nenhum filtro ativo"
+
+msgid "Clear all"
+msgstr "Limpar todos"
+
+msgid "Select all"
+msgstr "Marcar todos"
+
+msgid "Showing %(start)s to %(end)s of %(total)s records"
+msgstr "Mostrando %(start)s até %(end)s de %(total)s registros"
+
+msgid "Previous"
+msgstr "Anterior"
+
+msgid "Next"
+msgstr "Próximo"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Kind"
+msgstr "Tipo"
+
+msgid "Requested at"
+msgstr "Data de solicitação"
+
+msgid "Generation started"
+msgstr "Início da geração"
+
+msgid "Generation finished"
+msgstr "Fim da geração"
+
+msgid "Failed at"
+msgstr "Data de falha"
+
+msgid "Trashed at"
+msgstr "Data de lixeira"
+
+msgid "Processing time"
+msgstr "Tempo de processamento"
+
+msgid "Upload time"
+msgstr "Tempo de upload"
+
+msgid "Size"
+msgstr "Tamanho"
+
+msgid "Stakeholders"
+msgstr "Interessados"
+
+msgid "Failure cause"
+msgstr "Causa da falha"
+
+msgid "Failure stack"
+msgstr "Stack da falha"
+
+msgid "Show more"
+msgstr "Ver mais"
+
+msgid "Show less"
+msgstr "Ver menos"
+
+msgid "Download"
+msgstr "Download"
+
+msgid "Share"
+msgstr "Compartilhar"
+
+msgid "Delete"
+msgstr "Excluir"
+
+msgid "No exports found"
+msgstr "Nenhum arquivo encontrado"
+
+msgid "There are no exports to show right now."
+msgstr "Não há arquivos para exibir no momento."
+
+msgid "Request a new export"
+msgstr "Solicitar novo arquivo"
+
+msgid "New export"
+msgstr "Novo arquivo"
+
+msgid "Close"
+msgstr "Fechar"
+
+msgid "Request"
+msgstr "Solicitar"
+
+msgid "Show description"
+msgstr "Ver descrição"
+
+msgid "Show filters"
+msgstr "Ver filtros"
+
+msgid "Show columns"
+msgstr "Ver colunas"
+
+msgid "required"
+msgstr "obrigatório"
+
+msgid "optional"
+msgstr "opcional"
+
+msgid "No export forms available."
+msgstr "Nenhum formulário disponível."
+
+msgid "Information:"
+msgstr "Informação:"
+
+msgid "Attention!"
+msgstr "Atenção!"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Download unavailable until processing finishes"
+msgstr "Download indisponível até a conclusão do processamento"
+
+msgid "Search"
+msgstr "Busca"
+
+msgid "Export to %%s is not implemented yet"
+msgstr "Exportar para %%s - Funcionalidade a ser implementada"
+
+msgid "Move the export %%s to the trash?"
+msgstr "Tem certeza que deseja mover o arquivo %%s para a lixeira?"
+
+msgid "Export moved to the trash"
+msgstr "Arquivo movido para a lixeira com sucesso"
+
+msgid "Error moving the export to the trash"
+msgstr "Erro ao mover arquivo para a lixeira"

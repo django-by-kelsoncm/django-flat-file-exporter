@@ -174,7 +174,7 @@ class BaseExportView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
         return getattr(self, "content_type_export", "application/octet-stream")
 
     def get_notes(self) -> str:
-        return getattr(self, "notes", f"Requested by {self.request.user.get_username()}")
+        return getattr(self, "notes", _("Requested by %(username)s") % {"username": self.request.user.get_username()})
 
     def get_file_name(self) -> str:
         timestamp = now().strftime("%Y-%m-%d-%H-%M-%S")

@@ -9,7 +9,7 @@
         {% csrf_token %}
         {% if form.description %}
         <div class="callout callout-info">
-            <h5><i class="fas fa-info"></i> Information:</h5>
+            <h5><i class="fas fa-info"></i> {% trans "Information:" %}</h5>
             <div>{{ form.description_html|safe }}</div>
             {% if form.meta_data.columns %}
                 <div class="mb-2">
@@ -21,7 +21,7 @@
                         aria-expanded="false"
                         aria-controls="colunas-form-{{ forloop.counter }}"
                     >
-                        Show columns
+                        {% trans "Show columns" %}
                     </a>
                     <div class="collapse mt-2" id="colunas-form-{{ forloop.counter }}">
                         <ul class="list-unstyled small mb-0">
@@ -41,7 +41,7 @@
         {% if form.errors %}
             <div class="alert alert-danger alert-dismissible">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                <h5><i class="icon fas fa-ban"></i>Attention!</h5>
+                <h5><i class="icon fas fa-ban"></i>{% trans "Attention!" %}</h5>
                 <ul>
                     {% for error in form.non_field_errors %}
                         <li>{{ error }}</li>
@@ -175,7 +175,7 @@
                 <div class="btn-group btn-exportar">
                     {% if form.filetypes_mapped %}
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-download"></i> Export
+                            <i class="fas fa-download"></i> {% trans "Export" %}
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
                             {% for ft in form.filetypes_mapped %}
@@ -186,7 +186,7 @@
                         </div>
                     {% endif %}
                 </div>
-                <a href="{% url 'flat_file_exporter:index' %}" class="btn btn-secondary">Cancel</a>
+                <a href="{% url 'flat_file_exporter:index' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
                     <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         var exportButtons = document.querySelectorAll('.exportar-btn');

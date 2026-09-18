@@ -7,7 +7,7 @@
 
 {% block content %}
 
-    <h3>{% trans 'Exports' %}</h3>
+    <h3>{% trans 'Exports inbox' %}</h3>
 
     <!-- Main Row -->
     <div class="row">
@@ -23,24 +23,24 @@
                         <div class="filters-toolbar mb-3">
                             <!-- New export button -->
                             <button type="button" class="btn btn-primary btn-novo" data-toggle="modal" data-target="#newExportModal">
-                                <i class="fas fa-plus"></i> New
+                                <i class="fas fa-plus"></i> {% trans "New" %}
                             </button>
 
                             <!-- Grupo de Busca e Filtros -->
                             <div class="filters-group">
                                 <div class="input-group">
-                                    <input type="text" id="search-input" class="form-control" placeholder="Search...">
+                                    <input type="text" id="search-input" class="form-control" placeholder="{% trans 'Search...' %}">
                                     <div class="input-group-append">
                                         <button class="btn btn-default" type="button">
                                             <i class="fas fa-search"></i>
                                         </button>
                                         <div class="btn-group" role="group">
                                             <button type="button" class="btn btn-default dropdown-toggle" id="btn-filter-situacoes" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="fas fa-filter"></i> Statuses
+                                                <i class="fas fa-filter"></i> {% trans "Statuses" %}
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-down" id="dropdown-situacoes">
                                                 <div class="px-3 py-2">
-                                                    <input type="text" class="form-control form-control-sm autocomplete-search" placeholder="Search...">
+                                                    <input type="text" class="form-control form-control-sm autocomplete-search" placeholder="{% trans 'Search...' %}">
                                                 </div>
                                                 <div class="dropdown-divider"></div>
                                                 <div class="filter-items">
@@ -54,11 +54,11 @@
                                         </div>
                                         <div class="btn-group" role="group">
                                             <button type="button" class="btn btn-default dropdown-toggle" id="btn-filter-tipos" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="fas fa-filter"></i> Kinds
+                                                <i class="fas fa-filter"></i> {% trans "Kinds" %}
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-down dropdown-menu-right" id="dropdown-tipos">
                                                 <div class="px-3 py-2">
-                                                    <input type="text" class="form-control form-control-sm autocomplete-search" placeholder="Search...">
+                                                    <input type="text" class="form-control form-control-sm autocomplete-search" placeholder="{% trans 'Search...' %}">
                                                 </div>
                                                 <div class="dropdown-divider"></div>
                                                 <div class="filter-items">
@@ -77,7 +77,7 @@
                             <!-- Export button -->
                             <div class="btn-group btn-exportar">
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fas fa-download"></i> Export
+                                    <i class="fas fa-download"></i> {% trans "Export" %}
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right">
                                     <a class="dropdown-item" href="#" data-format="xlsx"><i class="fas fa-file-excel text-success"></i> XLSX</a>
@@ -90,9 +90,9 @@
                         
                         <!-- Filtros Ativos -->
                         <div id="active-filters">
-                            <small class="text-muted">Active filters:</small>
-                            <div id="filter-badges" class="d-inline-block"><span class="text-muted" style="font-size: 0.875rem;">No active filters</span></div>
-                            <a href="#" id="clear-filters" class="small ml-2 d-none">Clear all</a>
+                            <small class="text-muted">{% trans "Active filters:" %}</small>
+                            <div id="filter-badges" class="d-inline-block"><span class="text-muted" style="font-size: 0.875rem;">{% trans "No active filters" %}</span></div>
+                            <a href="#" id="clear-filters" class="small ml-2 d-none">{% trans "Clear all" %}</a>
                         </div>
                     </div>
 
@@ -106,22 +106,22 @@
             <div class="paginator p-3 border-bottom">
                 <div class="row align-items-center">
                     <div class="col-sm-12 col-md-3 mb-2 mb-md-0">
-                        <button type="button" class="btn btn-default btn-sm checkbox-toggle" title="Select all">
+                        <button type="button" class="btn btn-default btn-sm checkbox-toggle" title="{% trans 'Select all' %}">
                             <i class="far fa-square"></i>
                         </button>
                     </div>
                     <div class="col-sm-12 col-md-9 d-flex justify-content-md-end align-items-center flex-wrap">
                         {% if page_obj %}
                         <div class="dataTables_info mr-md-3 mb-2 mb-md-0" role="status" aria-live="polite">
-                            Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} records
+                            {% blocktrans with start=page_obj.start_index end=page_obj.end_index total=page_obj.paginator.count %}Showing {{ start }} to {{ end }} of {{ total }} records{% endblocktrans %}
                         </div>
                         <div class="dataTables_paginate paging_simple_numbers mb-2 mb-md-0">
                             <ul class="pagination pagination-sm m-0">
                                 <li class="paginate_button page-item previous {% if not page_obj.has_previous %}disabled{% endif %}">
                                     {% if page_obj.has_previous %}
-                                    <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Previous</a>
+                                    <a href="?page={{ page_obj.previous_page_number }}" class="page-link">{% trans "Previous" %}</a>
                                     {% else %}
-                                    <span class="page-link">Previous</span>
+                                    <span class="page-link">{% trans "Previous" %}</span>
                                     {% endif %}
                                 </li>
 
@@ -139,9 +139,9 @@
 
                                 <li class="paginate_button page-item next {% if not page_obj.has_next %}disabled{% endif %}">
                                     {% if page_obj.has_next %}
-                                    <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a>
+                                    <a href="?page={{ page_obj.next_page_number }}" class="page-link">{% trans "Next" %}</a>
                                     {% else %}
-                                    <span class="page-link">Next</span>
+                                    <span class="page-link">{% trans "Next" %}</span>
                                     {% endif %}
                                 </li>
                             </ul>
@@ -180,7 +180,7 @@
                             </div>
                             <div class="card-body d-flex flex-column">
                                 <div class="mb-2 js-card-field">
-                                    <strong><i class="fas fa-info-circle mr-1"></i> Status</strong>
+                                    <strong><i class="fas fa-info-circle mr-1"></i> {% trans "Status" %}</strong>
                                     <p class="text-muted mb-0">
                                         <span class="badge badge-{% if exported_file.status == 5 %}success{% elif exported_file.status == 9 %}danger{% elif exported_file.status == 1 %}warning{% else %}secondary{% endif %}" data-export-status-badge>
                                             {{ exported_file.get_status_display }}
@@ -188,56 +188,56 @@
                                     </p>
                                 </div>
                                 <div class="mb-2 js-card-field">
-                                    <strong><i class="far fa-calendar-alt mr-1"></i> Requested at</strong>
+                                    <strong><i class="far fa-calendar-alt mr-1"></i> {% trans "Requested at" %}</strong>
                                     <p class="text-muted mb-0">{{ exported_file.requested_at|naturaltime }}</p>
                                 </div>
                                 <div class="mb-2 js-card-field">
-                                    <strong><i class="far fa-file mr-1"></i> Kind</strong>
+                                    <strong><i class="far fa-file mr-1"></i> {% trans "Kind" %}</strong>
                                     <p class="text-muted mb-0">{{ exported_file.kind }}</p>
                                 </div>
                                 {% if exported_file.generation_started_at %}
                                 <div class="mb-2 js-card-field">
-                                    <strong><i class="far fa-calendar-check mr-1"></i> Generation started</strong>
+                                    <strong><i class="far fa-calendar-check mr-1"></i> {% trans "Generation started" %}</strong>
                                     <p class="text-muted mb-0">{{ exported_file.generation_started_at|naturaltime }}</p>
                                 </div>
                                 {% endif %}
                                 {% if exported_file.generation_finished_at %}
                                 <div class="mb-2 js-card-field">
-                                    <strong><i class="far fa-calendar-check mr-1"></i> Generation finished</strong>
+                                    <strong><i class="far fa-calendar-check mr-1"></i> {% trans "Generation finished" %}</strong>
                                     <p class="text-muted mb-0" data-export-finished-at>{{ exported_file.generation_finished_at|naturaltime }}</p>
                                 </div>
                                 {% endif %}
                                 {% if exported_file.failed_at %}
                                 <div class="mb-2 js-card-field">
-                                    <strong><i class="far fa-calendar-times mr-1"></i> Failed at</strong>
+                                    <strong><i class="far fa-calendar-times mr-1"></i> {% trans "Failed at" %}</strong>
                                     <p class="text-muted mb-0" data-export-failed-at>{{ exported_file.failed_at|naturaltime }}</p>
                                 </div>
                                 {% endif %}
                                 {% if exported_file.trashed_at %}
                                 <div class="mb-2 js-card-field">
-                                    <strong><i class="far fa-calendar-times mr-1"></i> Trashed at</strong>
+                                    <strong><i class="far fa-calendar-times mr-1"></i> {% trans "Trashed at" %}</strong>
                                     <p class="text-muted mb-0" data-export-trashed-at>{{ exported_file.trashed_at|naturaltime }}</p>
                                 </div>
                                 {% endif %}
                                 {% if exported_file.processing_time %}
                                 <div class="mb-2 js-card-field">
-                                    <strong><i class="far fa-clock mr-1"></i> Processing time</strong>
+                                    <strong><i class="far fa-clock mr-1"></i> {% trans "Processing time" %}</strong>
                                     <p class="text-muted mb-0" data-export-processing-time>{{ exported_file.processing_time|format_duration }}</p>
                                 </div>
                                 {% endif %}
                                 {% if exported_file.upload_time %}
                                 <div class="mb-2 js-card-field">
-                                    <strong><i class="far fa-clock mr-1"></i> Upload time</strong>
+                                    <strong><i class="far fa-clock mr-1"></i> {% trans "Upload time" %}</strong>
                                     <p class="text-muted mb-0" data-export-upload-time>{{ exported_file.upload_time|format_duration }}</p>
                                 </div>
                                 {% endif %}
                                 <div class="mb-2 js-card-field">
-                                    <strong><i class="fas fa-hdd mr-1"></i> Size</strong>
+                                    <strong><i class="fas fa-hdd mr-1"></i> {% trans "Size" %}</strong>
                                     <p class="text-muted mb-0" data-export-size>{{ exported_file.size|filesizeformat }}</p>
                                 </div>
                                 {% if exported_file.stakeholders.exists %}
                                 <div class="mb-2 js-card-field">
-                                    <strong><i class="fas fa-users mr-1"></i> Stakeholders</strong>
+                                    <strong><i class="fas fa-users mr-1"></i> {% trans "Stakeholders" %}</strong>
                                     <p class="text-muted mb-0">{{ exported_file.stakeholders.count }}</p>
                                 </div>
                                 {% endif %}
@@ -247,25 +247,25 @@
                                         <p class="text-muted mb-0">{{ exported_file.task_id|default:"N/A" }}</p>
                                     </div>
                                     <div class="mb-2 js-card-field">
-                                        <strong><i class="fas fa-exclamation-triangle mr-1"></i> Failure cause</strong>
+                                        <strong><i class="fas fa-exclamation-triangle mr-1"></i> {% trans "Failure cause" %}</strong>
                                         <p class="text-muted mb-0" data-export-failure-cause>{{ exported_file.failure_cause|default:"N/A" }}</p>
                                     </div>
                                     <div class="mb-2 js-card-field">
-                                        <strong><i class="fas fa-exclamation-triangle mr-1"></i> Failure stack</strong>
+                                        <strong><i class="fas fa-exclamation-triangle mr-1"></i> {% trans "Failure stack" %}</strong>
                                         <p class="text-muted mb-0" data-export-failure-stack>{{ exported_file.failure_stack|default:"N/A" }}</p>
                                     </div>
                                 {% endif %}
-                                <button type="button" class="btn btn-link btn-sm p-0 mt-auto text-left js-toggle-campos d-none" aria-expanded="false">Show more</button>
+                                <button type="button" class="btn btn-link btn-sm p-0 mt-auto text-left js-toggle-campos d-none" aria-expanded="false">{% trans "Show more" %}</button>
                             </div>
                             <div class="card-footer">
                                 <div class="d-flex justify-content-between">
-                                    <a {% if exported_file.download_url %}href="{{ exported_file.download_url }}"{% else %}href="#"{% endif %} class="btn btn-sm {% if exported_file.status == 5 %}btn-primary{% else %}btn-secondary disabled{% endif %}" title="Download" data-export-download {% if exported_file.status != 5 %}tabindex="-1" aria-disabled="true"{% endif %}>
+                                    <a {% if exported_file.download_url %}href="{{ exported_file.download_url }}"{% else %}href="#"{% endif %} class="btn btn-sm {% if exported_file.status == 5 %}btn-primary{% else %}btn-secondary disabled{% endif %}" title="{% trans 'Download' %}" data-export-download {% if exported_file.status != 5 %}tabindex="-1" aria-disabled="true"{% endif %}>
                                         <i class="fas fa-download"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-warning" title="Share">
+                                    <a href="#" class="btn btn-sm btn-warning" title="{% trans 'Share' %}">
                                         <i class="fas fa-share"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-danger" title="Delete">
+                                    <a href="#" class="btn btn-sm btn-danger" data-export-delete title="{% trans 'Delete' %}">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </div>
@@ -275,15 +275,15 @@
                     {% empty %}
                     <div class="col-12 p-3">
                         <div class="callout callout-info">
-                            <h5><i class="fas fa-info"></i> No exports found</h5>
-                            <p>There are no exports to show right now.</p>
+                            <h5><i class="fas fa-info"></i> {% trans "No exports found" %}</h5>
+                            <p>{% trans "There are no exports to show right now." %}</p>
                             <button 
                                 type="button" 
                                 class="btn btn-primary mt-2 btn-sm"
                                 data-toggle="modal"
                                 data-target="#newExportModal"
                             >
-                                <i class="fas fa-plus"></i> Request a new export
+                                <i class="fas fa-plus"></i> {% trans "Request a new export" %}
                             </button>
                         </div>
                     </div>
@@ -302,8 +302,8 @@
         <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="newExportModalLabel">New export</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title" id="newExportModalLabel">{% trans "New export" %}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{% trans 'Close' %}">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -317,7 +317,7 @@
                                             <h6 class="card-title mb-3">{{ form.meta_data.title }}</h6>
 
                                             <div class="mb-2">
-                                                <a class="btn btn-primary btn-sm {% if forloop.first %}js-primeiro-formulario{% endif %}" href="{{ form.meta_data.link }}">Request</a>
+                                                <a class="btn btn-primary btn-sm {% if forloop.first %}js-primeiro-formulario{% endif %}" href="{{ form.meta_data.link }}">{% trans "Request" %}</a>
                                             </div>
 
                                             {% if form.meta_data.description %}
@@ -330,7 +330,7 @@
                                                         aria-expanded="false"
                                                         aria-controls="descricao-form-{{ forloop.counter }}"
                                                     >
-                                                        Show description
+                                                        {% trans "Show description" %}
                                                     </a>
                                                     <div class="collapse mt-2" id="descricao-form-{{ forloop.counter }}">
                                                         <div class="small text-muted">{{ form.meta_data.description|render_markdown }}</div>
@@ -348,14 +348,14 @@
                                                         aria-expanded="false"
                                                         aria-controls="filtros-form-{{ forloop.counter }}"
                                                     >
-                                                        Show filters
+                                                        {% trans "Show filters" %}
                                                     </a>
                                                     <div class="collapse mt-2" id="filtros-form-{{ forloop.counter }}">
                                                         <ul class="list-unstyled small mb-0">
                                                             {% for filter in form.meta_data.filters %}
                                                                 <li class="mb-2">
                                                                     <strong>{{ filter.title }}</strong>
-                                                                    <span class="text-muted">({% if filter.required %}required{% else %}optional{% endif %})</span>
+                                                                    <span class="text-muted">({% if filter.required %}{% trans "required" %}{% else %}{% trans "optional" %}{% endif %})</span>
                                                                     {% if filter.description %}
                                                                         <div class="text-muted">{{ filter.description|render_markdown }}</div>
                                                                     {% endif %}
@@ -375,7 +375,7 @@
                                                         aria-expanded="false"
                                                         aria-controls="colunas-form-{{ forloop.counter }}"
                                                     >
-                                                        Show columns
+                                                        {% trans "Show columns" %}
                                                     </a>
                                                     <div class="collapse mt-2" id="colunas-form-{{ forloop.counter }}">
                                                         <ul class="list-unstyled small mb-0">
@@ -395,7 +395,7 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <p class="mb-0 text-muted">No export forms available.</p>
+                        <p class="mb-0 text-muted">{% trans "No export forms available." %}</p>
                     {% endif %}
                 </div>
             </div>
@@ -406,5 +406,21 @@
 
 {% block bottom_scripts %}
     {{ block.super }}
+    <script>
+        window.flatFileExporterI18n = {
+            download: "{% trans 'Download' as s %}{{ s|escapejs }}",
+            downloadUnavailable: "{% trans 'Download unavailable until processing finishes' as s %}{{ s|escapejs }}",
+            showMore: "{% trans 'Show more' as s %}{{ s|escapejs }}",
+            showLess: "{% trans 'Show less' as s %}{{ s|escapejs }}",
+            search: "{% trans 'Search' as s %}{{ s|escapejs }}",
+            status: "{% trans 'Status' as s %}{{ s|escapejs }}",
+            kind: "{% trans 'Kind' as s %}{{ s|escapejs }}",
+            noActiveFilters: "{% trans 'No active filters' as s %}{{ s|escapejs }}",
+            exportNotImplemented: "{% trans 'Export to %s is not implemented yet' as s %}{{ s|escapejs }}",
+            confirmTrash: "{% trans 'Move the export %s to the trash?' as s %}{{ s|escapejs }}",
+            trashed: "{% trans 'Export moved to the trash' as s %}{{ s|escapejs }}",
+            trashError: "{% trans 'Error moving the export to the trash' as s %}{{ s|escapejs }}"
+        };
+    </script>
     <script src="{% static 'flat_file_exporter/index.js' %}"></script>
 {% endblock %}

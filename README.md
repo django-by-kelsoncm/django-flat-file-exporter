@@ -116,6 +116,16 @@ The bundled base layout loads Bootstrap 4, jQuery and Font Awesome 5 from CDNs. 
 AdminLTE 3), point `FLAT_FILE_EXPORTER_BASE_TEMPLATE` at a template that provides the blocks `extra_styles`,
 `content` and `bottom_scripts`, with jQuery and Bootstrap 4 loaded.
 
+## Translations
+
+All texts are translatable (`gettext`), with English as the source language. A `pt_BR` catalog is included; the
+language follows Django's active language (`LANGUAGE_CODE` / `LocaleMiddleware`). The strings used by the bundled
+JavaScript are delivered by the list page as `window.flatFileExporterI18n`.
+
+To add a language, run `django-admin makemessages -l <code>` inside the `flat_file_exporter` directory, translate
+`locale/<code>/LC_MESSAGES/django.po` and run `django-admin compilemessages`. Note that the `{% trans %}` tag doubles
+`%` when looking a message up, so msgids that contain `%s` in the templates are `%%s` in the catalog.
+
 ## Security notes
 
 - Downloading and trashing an export requires being one of its stakeholders (the requester is added automatically).

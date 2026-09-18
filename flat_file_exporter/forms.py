@@ -6,6 +6,8 @@ import markdown
 from django import forms
 from django.apps import apps
 from django.urls import NoReverseMatch, reverse
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
 from flat_file_exporter.conf import get_filetypes
 from flat_file_exporter.models import ExportedFile
@@ -86,7 +88,7 @@ class BaseExportForm(forms.Form):
     url_name: str | None = None
     _export_forms: list[type["BaseExportForm"]] | None = None
 
-    filetype = forms.CharField(widget=forms.HiddenInput(), initial="csv", required=True, label="File type")
+    filetype = forms.CharField(widget=forms.HiddenInput(), initial="csv", required=True, label=_("File type"))
 
     @property
     def meta_data(self) -> ExportMetadata:
@@ -190,7 +192,7 @@ class BaseExportForm(forms.Form):
         return "\n".join(description).strip()
 
     def get_default_breadcrumbs(self) -> list[dict[str, str]]:
-        crumbs = [{"title": "Exports", "link": reverse("flat_file_exporter:index")}]
+        crumbs = [{"title": gettext("Exports"), "link": reverse("flat_file_exporter:index")}]
         link = self.get_default_link()
         if link:
             crumbs.append({"title": self.get_default_title(), "link": link})
