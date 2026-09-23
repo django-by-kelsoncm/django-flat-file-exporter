@@ -116,7 +116,7 @@ class IndexView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["base_template"] = get_base_template()
-        context["forms"] = BaseExportForm.get_export_forms()
+        context["forms"] = [form for form in BaseExportForm.get_export_forms() if form.is_visible_to(self.request.user)]
         context["statuses"] = BaseExportForm.get_statuses()
         context["status"] = ExportedFile.Status
         return context

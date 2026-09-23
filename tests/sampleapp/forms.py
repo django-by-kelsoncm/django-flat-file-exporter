@@ -15,3 +15,12 @@ class PeopleExportForm(BaseExportForm):
     columns = [ExportColumn("name", "Full name"), ExportColumn("age")]
 
     min_age = forms.IntegerField(label="Minimum age", required=False, help_text="Only people at least this old")
+
+
+class RestrictedExportForm(BaseExportForm):
+    """Restricted export
+
+    Only visible in the catalog to users who also hold the delete permission.
+    """
+
+    url_name = "restricted_export"

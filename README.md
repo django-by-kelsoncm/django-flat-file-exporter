@@ -102,6 +102,10 @@ urlpatterns = [path("export/", PeopleExportView.as_view(), name="export")]  # ap
 The export now appears in the catalog at `/exports/`. The user picks a format in the form, the task runs in the
 background, and the list page polls the status until the file can be downloaded.
 
+The catalog only lists exports the current user can actually request: the permission required for each entry is
+read off the `permission_required` of the view that serves it (resolved from the form's URL), so a form whose view
+requires an extra permission beyond `flat_file_exporter.view_exportedfile` stays hidden until the user holds it too.
+
 ## Settings
 
 | Setting | Default | Meaning |

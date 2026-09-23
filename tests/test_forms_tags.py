@@ -1,8 +1,10 @@
 import pytest
 from django import forms
+from django.contrib.auth import get_user_model
 from django.template import Context, Template
 from django.test import override_settings
 
+from flat_file_exporter import forms as forms_module
 from flat_file_exporter.forms import (
     BaseExportForm,
     ExportColumn,
@@ -11,7 +13,7 @@ from flat_file_exporter.forms import (
     to_snake_case,
 )
 from flat_file_exporter.templatetags import flat_file_exporter_tags as tags
-from tests.sampleapp.forms import PeopleExportForm
+from tests.sampleapp.forms import PeopleExportForm, RestrictedExportForm
 
 
 def test_to_snake_case():
@@ -93,6 +95,65 @@ def test_get_export_forms_propagates_real_import_errors(monkeypatch):
             BaseExportForm.get_export_forms()
     finally:
         BaseExportForm._export_forms = None
+
+
+@pytest.mark.django_db
+def test_get_required_permissions_reads_the_view_permission_required():
+    assert PeopleExportForm.get_required_permissions() == ("flat_file_exporter.view_exportedfile",)
+    assert RestrictedExportForm.get_required_permissions() == (
+        "flat_file_exporter.view_exportedfile",
+        "flat_file_exporter.delete_exportedfile",
+    )
+
+
+def test_get_required_permissions_empty_without_a_link():
+    class NoLinkForm(BaseExportForm):
+        pass
+
+    NoLinkForm.__module__ = "not_an_installed_app.forms"
+    assert NoLinkForm.get_required_permissions() == ()
+
+
+def test_get_required_permissions_empty_when_the_view_has_none():
+    class AdminIndexForm(BaseExportForm):
+        url_name = "admin:index"
+
+    assert AdminIndexForm.get_required_permissions() == ()
+
+
+def test_get_required_permissions_empty_when_the_link_does_not_resolve(monkeypatch):
+    from django.urls import Resolver404
+
+    def boom(path):
+        raise Resolver404
+
+    monkeypatch.setattr(forms_module, "resolve", boom)
+    assert PeopleExportForm.get_required_permissions() == ()
+
+
+@pytest.mark.django_db
+def test_is_visible_to_without_required_permissions_is_always_true():
+    class NoLinkForm(BaseExportForm):
+        pass
+
+    NoLinkForm.__module__ = "not_an_installed_app.forms"
+    assert NoLinkForm.is_visible_to(get_user_model().objects.create_user("anyone", password="pw"))  # noqa: S106
+
+
+@pytest.mark.django_db
+def test_is_visible_to_checks_every_required_permission():
+    from django.contrib.auth.models import Permission
+
+    partial = get_user_model().objects.create_user("partial", password="pw")  # noqa: S106
+    partial.user_permissions.add(Permission.objects.get(codename="view_exportedfile"))
+    assert PeopleExportForm.is_visible_to(partial) is True
+    assert RestrictedExportForm.is_visible_to(partial) is False
+
+    full = get_user_model().objects.create_user("full", password="pw")  # noqa: S106
+    full.user_permissions.add(
+        Permission.objects.get(codename="view_exportedfile"), Permission.objects.get(codename="delete_exportedfile")
+    )
+    assert RestrictedExportForm.is_visible_to(full) is True
 
 
 def test_get_statuses():

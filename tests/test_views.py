@@ -1,5 +1,6 @@
 import pytest
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.test import override_settings
 from django.urls import reverse
 
@@ -33,6 +34,20 @@ def test_index_lists_own_exports_only(client_logged, export, other_user):
     assert "/people/" in content
     assert reverse("flat_file_exporter:task_status", args=[export.pk]) in content
     assert reverse("flat_file_exporter:delete", args=[export.pk]) in content
+
+
+def test_index_catalog_hides_forms_the_user_has_no_permission_for(client_logged):
+    """``user`` only has ``view_exportedfile``, not the extra permission ``RestrictedExportView`` requires."""
+    content = client_logged.get(reverse("flat_file_exporter:index")).content.decode()
+    assert "People list" in content
+    assert "Restricted export" not in content
+
+
+def test_index_catalog_shows_forms_once_the_user_has_the_extra_permission(client, user):
+    user.user_permissions.add(Permission.objects.get(codename="delete_exportedfile"))
+    client.force_login(user)
+    content = client.get(reverse("flat_file_exporter:index")).content.decode()
+    assert "Restricted export" in content
 
 
 def test_index_visibility_all_shows_everything(client_logged, export, other_user):

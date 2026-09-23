@@ -5,7 +5,7 @@ from typing import Any, TypedDict
 import markdown
 from django import forms
 from django.apps import apps
-from django.urls import NoReverseMatch, reverse
+from django.urls import NoReverseMatch, Resolver404, resolve, reverse
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
@@ -213,6 +213,29 @@ class BaseExportForm(forms.Form):
         return [
             ExportColumn(name=column.name, description=column.description) for column in getattr(self, "columns", [])
         ]
+
+    @classmethod
+    def get_required_permissions(cls) -> tuple[str, ...]:
+        """Permissions required to request this export, read off the ``permission_required`` of the view that serves
+        it (resolved from ``get_default_link()``). Empty when the link or the view's permissions can't be
+        determined -- the form is then treated as visible to everyone, same as before this check existed."""
+        link = cls().get_default_link()
+        if not link:
+            return ()
+        try:
+            view_class = getattr(resolve(link).func, "view_class", None)
+        except Resolver404:
+            return ()
+        permission_required = getattr(view_class, "permission_required", None)
+        if not permission_required:
+            return ()
+        return (permission_required,) if isinstance(permission_required, str) else tuple(permission_required)
+
+    @classmethod
+    def is_visible_to(cls, user) -> bool:
+        """Whether ``user`` has every permission required by the view that serves this form."""
+        permissions = cls.get_required_permissions()
+        return not permissions or user.has_perms(permissions)
 
     @classmethod
     def get_export_forms(cls) -> list[type["BaseExportForm"]]:
