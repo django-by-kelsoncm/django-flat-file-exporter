@@ -161,17 +161,21 @@ class BaseExportForm(forms.Form):
         return self._metadata
 
     def get_default_link(self) -> str:
-        """URL of the view for this form: ``url_name``, or ``<app_label>:<form_name_in_snake_case>`` as a guess."""
+        """URL of the view for this form: ``url_name``, or ``<namespace>:<form_name_in_snake_case>`` as a guess,
+        trying the app's ``label`` (the common case) and its full dotted ``name`` (for projects that namespace
+        ``include()`` with ``app_name = SomeConfig.name`` instead of the auto-derived short label)."""
         if self.url_name:
             return reverse(self.url_name)
         app_config = apps.get_containing_app_config(type(self).__module__)
         if app_config is None:
             return ""
         guess = to_snake_case(type(self).__name__.removesuffix("Form"))
-        try:
-            return reverse(f"{app_config.label}:{guess}")
-        except NoReverseMatch:
-            return ""
+        for namespace in dict.fromkeys((app_config.label, app_config.name)):
+            try:
+                return reverse(f"{namespace}:{guess}")
+            except NoReverseMatch:
+                continue
+        return ""
 
     def get_default_title(self) -> str:
         for line in (type(self).__doc__ or "").split("\n"):

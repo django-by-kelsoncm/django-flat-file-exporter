@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "django-flat-file-exporter"
-version = "0.1.1"
+version = "0.1.2"
 description = "Reusable Django app to request, generate asynchronously, store and download flat-file exports (xlsx, csv, tsv, json, html, parquet)"
 readme = "README.md"
 license = { file = "LICENSE" }

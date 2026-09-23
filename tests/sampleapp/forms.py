@@ -24,3 +24,11 @@ class RestrictedExportForm(BaseExportForm):
     """
 
     url_name = "restricted_export"
+
+
+class AppNameOnlyExportForm(BaseExportForm):
+    """App name only export
+
+    No ``url_name``; only resolvable by guessing the app's dotted ``name`` ("tests.sampleapp"), not its short
+    ``label`` ("sampleapp") -- see ``tests.urls.app_name_only_urls``.
+    """

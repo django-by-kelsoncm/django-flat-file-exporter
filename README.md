@@ -67,6 +67,11 @@ class PeopleExportForm(BaseExportForm):
     min_age = forms.IntegerField(label="Minimum age", required=False)
 ```
 
+`url_name` is optional: without it, the link is guessed as `<namespace>:<form_name_in_snake_case>`, trying the
+app's `label` (the common case) and then its full dotted `name` (for projects that namespace `include()` with
+`app_name = SomeConfig.name` instead of the auto-derived short label). Setting `url_name` explicitly is still the
+most reliable option and the one this README's examples use.
+
 ```python
 # people/tasks.py
 from celery import shared_task

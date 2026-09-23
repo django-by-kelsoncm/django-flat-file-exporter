@@ -70,6 +70,14 @@ def test_link_guess_without_url_name_returns_empty():
     assert [c["title"] for c in GuessedForm().get_default_breadcrumbs()] == ["Exports"]
 
 
+def test_link_guess_falls_back_to_the_app_config_dotted_name():
+    """The URL is only registered under the app's dotted `name` ("tests.sampleapp"), not its short `label`
+    ("sampleapp"): the `label` guess fails and `get_default_link()` must retry with `app_config.name`."""
+    from tests.sampleapp.forms import AppNameOnlyExportForm
+
+    assert AppNameOnlyExportForm().get_default_link() == "/appname/export/"
+
+
 @pytest.mark.django_db
 def test_get_export_forms_discovers_and_caches():
     BaseExportForm._export_forms = None
