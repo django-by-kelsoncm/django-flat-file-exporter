@@ -322,6 +322,14 @@ $(function () {
         });
     });
 
+    function buildBadge(cssClass, label, filter, value) {
+        var icon = $('<i class="fas fa-times"></i>').attr('data-filter', filter);
+        if (value !== undefined) {
+            icon.attr('data-value', value);
+        }
+        return $('<span class="badge"></span>').addClass(cssClass).text(label + ' ').append(icon);
+    }
+
     function updateActiveFilters() {
         $('.filter-item-situacao').each(function() {
             var value = String($(this).data('value'));
@@ -347,7 +355,7 @@ $(function () {
         var searchText = $('#search-input').val();
         if (searchText && searchText.trim() !== '') {
             hasFilters = true;
-            badges.push('<span class="badge badge-warning">' + t('search', 'Search') + ': ' + searchText + ' <i class="fas fa-times" data-filter="search"></i></span>');
+            badges.push(buildBadge('badge-warning', t('search', 'Search') + ': ' + searchText, 'search'));
         }
 
         if (selectedStatuses.length > 0) {
@@ -357,7 +365,7 @@ $(function () {
                 var text = element.data('text');
 
                 if (text) {
-                    badges.push('<span class="badge badge-info">' + t('status', 'Status') + ': ' + text + ' <i class="fas fa-times" data-filter="situacao" data-value="' + value + '"></i></span>');
+                    badges.push(buildBadge('badge-info', t('status', 'Status') + ': ' + text, 'situacao', value));
                 }
             });
         }
@@ -369,16 +377,18 @@ $(function () {
                 var text = element.data('text');
 
                 if (text) {
-                    badges.push('<span class="badge badge-success">' + t('kind', 'Kind') + ': ' + text + ' <i class="fas fa-times" data-filter="tipo" data-value="' + value + '"></i></span>');
+                    badges.push(buildBadge('badge-success', t('kind', 'Kind') + ': ' + text, 'tipo', value));
                 }
             });
         }
 
         if (hasFilters) {
-            $('#filter-badges').html(badges.join(''));
+            $('#filter-badges').empty().append(badges);
             $('#clear-filters').removeClass('d-none');
         } else {
-            $('#filter-badges').html('<span class="text-muted" style="font-size: 0.875rem;">' + t('noActiveFilters', 'No active filters') + '</span>');
+            $('#filter-badges').empty().append(
+                $('<span class="text-muted"></span>').css('font-size', '0.875rem').text(t('noActiveFilters', 'No active filters'))
+            );
             $('#clear-filters').addClass('d-none');
         }
     }
